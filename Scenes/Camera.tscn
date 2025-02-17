@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://bdo6yyrrddwad"]
+
+[ext_resource type="Script" path="res://Scripts/Camera.cs" id="1_c1p8d"]
+[ext_resource type="Texture2D" uid="uid://b2pxc3ichehsj" path="res://Assets/Crosshair White.png" id="2_1pbfl"]
+
+[node name="Camera" type="Camera3D"]
+script = ExtResource("1_c1p8d")
+
+[node name="Crosshair" type="TextureRect" parent="."]
+offset_left = 511.0
+offset_top = 268.0
+offset_right = 575.0
+offset_bottom = 332.0
+texture = ExtResource("2_1pbfl")

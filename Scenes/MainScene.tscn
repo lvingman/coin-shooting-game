@@ -1,3 +1,51 @@
-[gd_scene format=3 uid="uid://dffvetapaf2up"]
+[gd_scene load_steps=7 format=3 uid="uid://dffvetapaf2up"]
+
+[ext_resource type="PackedScene" uid="uid://wjw7h2iihacr" path="res://Scenes/Coin.tscn" id="1_ipcrd"]
+[ext_resource type="PackedScene" uid="uid://bdo6yyrrddwad" path="res://Scenes/Camera.tscn" id="2_j61r5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o30ux"]
+albedo_color = Color(0.294118, 0.682353, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x8jja"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_arggc"]
+margin = 0.05
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+
+[sub_resource type="Environment" id="Environment_cwrja"]
 
 [node name="Node3D" type="Node3D"]
+
+[node name="Environment" type="Node" parent="."]
+
+[node name="Coin" parent="Environment" instance=ExtResource("1_ipcrd")]
+transform = Transform3D(1, 0, 0, 0, 0.769165, 0.63905, 0, -0.63905, 0.769165, -0.842623, 2.96827, 0.275054)
+gravity_scale = 0.254
+linear_velocity = Vector3(0, 2, 0)
+angular_velocity = Vector3(8.72665, 0, 0)
+
+[node name="Camera" parent="Environment" node_paths=PackedStringArray("Target") instance=ExtResource("2_j61r5")]
+transform = Transform3D(1, 0, 0, 0, -0.464858, -0.885385, 0, 0.885385, -0.464858, 0, 2.339, 4.06171)
+Target = NodePath("../Coin")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(22.4974, 0, 0, 0, 1, 0, 0, 0, 25.1615, 0, 0, 0)
+material_overlay = SubResource("StandardMaterial3D_o30ux")
+mesh = SubResource("BoxMesh_x8jja")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Environment/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1.03561, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_arggc")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_cwrja")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, -0.648877, 0.760893, 0, -0.760893, -0.648877, 0, 8.49299, -6.57339)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.55295)
+omni_range = 25.4018
+omni_attenuation = -0.513

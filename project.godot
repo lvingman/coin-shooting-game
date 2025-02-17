@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="Coin Shooting Game"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+run/main_scene="res://Scenes/MainScene.tscn"
+config/features=PackedStringArray("4.3", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [dotnet]
@@ -25,6 +26,10 @@ folder_colors={
 "res://Scenes/": "blue",
 "res://Scripts/": "purple"
 }
+
+[physics]
+
+3d/solver/solver_iterations=32
 
 [rendering]
 

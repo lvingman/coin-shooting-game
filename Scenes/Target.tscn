@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c7x58bj2xvasf"]
+
+[ext_resource type="ArrayMesh" uid="uid://10iay0jvdiam" path="res://Assets/Target2/tripo_convert_4aa417c7-503f-4dfe-ae8f-194449a632a8.obj" id="1_eejng"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_sne6w"]
+height = 0.226959
+radius = 0.496682
+
+[node name="Target" type="StaticBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("CylinderShape3D_sne6w")
+
+[node name="Model" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_eejng")

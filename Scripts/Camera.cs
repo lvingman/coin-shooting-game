@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class Camera : Camera3D
 {
@@ -8,40 +7,52 @@ public partial class Camera : Camera3D
 
     [Export]
     public float RotationSpeed { get; set; } = 2.0f; // Lower = lazier rotation
-
+    
     private Vector3 _currentLookAtPoint;
     private TextureRect _crosshair;
+    private RayCast3D _rayCast;
 
     public override void _Ready()
     {
-        // Get the crosshair node
         _crosshair = GetNode<TextureRect>("Crosshair");
+        _rayCast = GetNode<RayCast3D>("RayCast3D");
 
-        // Hide the OS cursor and lock the mouse in place (optional for FPS-style controls)
         Input.MouseMode = Input.MouseModeEnum.Hidden;
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (Target == null)
-            return;
+        if (Target == null) return;
 
-        // Smoothly interpolate the look-at point
-        _currentLookAtPoint = _currentLookAtPoint.Lerp(
-            Target.GlobalPosition, 
-            (float)delta * RotationSpeed
-        );
-
-        // Look at the interpolated point
+        _currentLookAtPoint = _currentLookAtPoint.Lerp(Target.GlobalPosition, (float)delta * RotationSpeed);
         LookAt(_currentLookAtPoint);
     }
 
     public override void _Process(double delta)
     {
+        UpdateCrosshairPosition();
+        UpdateRaycastPosition();
+    }
+
+    private void UpdateCrosshairPosition()
+    {
         if (_crosshair != null)
         {
-            // Move the crosshair to the mouse position
             _crosshair.Position = GetViewport().GetMousePosition() - (_crosshair.Size / 2);
         }
     }
+
+    private void UpdateRaycastPosition()
+    {
+        if (_rayCast == null) return;
+
+        Vector2 mousePos = GetViewport().GetMousePosition();
+
+        _rayCast.GlobalPosition = ProjectRayOrigin(mousePos);
+        _rayCast.TargetPosition = ProjectRayNormal(mousePos) *100f;
+        //_rayCast.TargetPosition = _rayCast.ToLocal(_rayCast.GlobalPosition + ProjectRayNormal(mousePos));
+        
+        GD.Print($"Raycast Location: {_rayCast.GlobalPosition}, Raycast Target: {_rayCast.TargetPosition}");
+    }
+
 }

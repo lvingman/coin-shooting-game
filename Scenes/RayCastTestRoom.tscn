@@ -1,0 +1,72 @@
+[gd_scene load_steps=11 format=3 uid="uid://cfqajbgqccrke"]
+
+[ext_resource type="PackedScene" uid="uid://c7x58bj2xvasf" path="res://Scenes/Target.tscn" id="1_t1yal"]
+[ext_resource type="PackedScene" uid="uid://bdo6yyrrddwad" path="res://Scenes/Camera.tscn" id="2_c8l74"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pcdsu"]
+albedo_color = Color(0.278169, 0.441308, 0.267178, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_b68rx"]
+material = SubResource("StandardMaterial3D_pcdsu")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_t7jc7"]
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ghsen"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f3pdd"]
+albedo_color = Color(0.940325, 0.691354, 0.470988, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_sqsn4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tpvks"]
+albedo_color = Color(0.765523, 0.953929, 0.748861, 1)
+
+[sub_resource type="Environment" id="Environment_f23bm"]
+
+[node name="RayCastTestRoom" type="Node3D"]
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+transform = Transform3D(91.2419, 0, 0, 0, 1.30159, 0, 0, 0, 79.081, 0, 0, 0)
+mesh = SubResource("BoxMesh_b68rx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_t7jc7")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-6.02842e-07, -1, 2.75677e-06, 13.7914, -4.37114e-08, 0, -5.27021e-14, -8.74228e-08, -31.5337, 43.4574, 3.24948, 0)
+material_override = SubResource("StandardMaterial3D_ghsen")
+material_overlay = SubResource("StandardMaterial3D_f3pdd")
+mesh = SubResource("PlaneMesh_sqsn4")
+surface_material_override/0 = SubResource("StandardMaterial3D_tpvks")
+
+[node name="Target" parent="." instance=ExtResource("1_t1yal")]
+transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 42.7913, 11.7275, 0)
+
+[node name="Target5" parent="." instance=ExtResource("1_t1yal")]
+transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 42.6898, 11.7275, -14.3913)
+
+[node name="Target2" parent="." instance=ExtResource("1_t1yal")]
+transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 43.0644, 11.7275, 13.5091)
+
+[node name="Target3" parent="." instance=ExtResource("1_t1yal")]
+transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 43.0644, 5.38548, 6.0026)
+
+[node name="Target4" parent="." instance=ExtResource("1_t1yal")]
+transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 43.0644, 5.38548, -8.90911)
+
+[node name="Camera" parent="." instance=ExtResource("2_c8l74")]
+transform = Transform3D(-0.0063529, 0, -0.99998, 0, 1, 0, 0.99998, 0, -0.0063529, 7.29928, 12.1306, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_f23bm")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 85.7951, 0)
+omni_range = 106.628
+omni_attenuation = 0.067
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(0.0951376, 0.423709, -0.900788, -0.044503, 0.905798, 0.421366, 0.994469, 0, 0.105032, -93.5159, 78.5742, 0)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bdo6yyrrddwad"]
 
-[ext_resource type="Script" path="res://Scripts/Camera.cs" id="1_c1p8d"]
+[ext_resource type="Script" path="res://Scripts/src/Camera.cs" id="1_c1p8d"]
 [ext_resource type="Texture2D" uid="uid://b2pxc3ichehsj" path="res://Assets/Crosshair White.png" id="2_1pbfl"]
 [ext_resource type="AudioStream" uid="uid://bylf1v10sha7e" path="res://Assets/SFX/Gun/gun5_22.wav" id="3_0nwus"]
 
@@ -21,3 +21,4 @@ collide_with_areas = true
 
 [node name="GunSFX" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_0nwus")
+volume_db = -13.605

@@ -1,7 +1,10 @@
+using CoinShootingGame.Scripts.Communication;
+using CommunityToolkit.Mvvm.Messaging;
 using Godot;
 
 public partial class Camera : Camera3D
 {
+	#region Attributes
 	[Export]
 	public RigidBody3D Target { get; set; }
 
@@ -12,9 +15,12 @@ public partial class Camera : Camera3D
 	private TextureRect _crosshair;
 	private RayCast3D _rayCast;
 	private AudioStreamPlayer _gunSfx;
+	
+	#endregion
+	
+	#region Overrides
 
-	#region overrides
-
+	
 	public override void _Ready()
 	{
 		_crosshair = GetNode<TextureRect>("Crosshair");
@@ -42,7 +48,7 @@ public partial class Camera : Camera3D
 	{
 		if (@event.IsActionPressed("fire"))
 		{
-			PlayGunSFX();
+			ShootGun();
 		}
 	}
 
@@ -69,8 +75,15 @@ public partial class Camera : Camera3D
 		GD.Print($"Raycast Location: {_rayCast.GlobalPosition}, Raycast Target: {_rayCast.TargetPosition}");
 	}
 
-	private void PlayGunSFX()
+	private void ShootGun()
 	{
+		_rayCast.ForceRaycastUpdate();
+		if (_rayCast.IsColliding())
+		{
+			Rid colliderRid = _rayCast.GetColliderRid();
+			StrongReferenceMessenger.Default.Send<Hit>(new(colliderRid));
+		}
+		
 		if (_gunSfx != null)
 		{
 			_gunSfx.Play();

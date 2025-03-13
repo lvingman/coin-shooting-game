@@ -22,7 +22,21 @@ public partial class Camera : Camera3D, ScoreListener
 	
 	#region Overrides
 
-	
+	#region MVVM
+	public override void _EnterTree()   //Lets to listen messages from IRecipient and the type of message emmited
+	{
+		base._EnterTree();
+		StrongReferenceMessenger.Default.RegisterAll(this);
+	}
+
+	public override void _ExitTree()
+	{
+		base._ExitTree();
+
+		StrongReferenceMessenger.Default.UnregisterAll(this); //Lets to unregister messages (For what idk)
+	}
+
+	#endregion
 	public override void _Ready()
 	{
 		_crosshair = GetNode<TextureRect>("Crosshair");
@@ -55,22 +69,10 @@ public partial class Camera : Camera3D, ScoreListener
 		}
 	}
 	
-	public override void _EnterTree()   //Lets to listen messages from IRecipient and the type of message emmited
-	{
-		base._EnterTree();
-		StrongReferenceMessenger.Default.RegisterAll(this);
-	}
-
-	public override void _ExitTree()
-	{
-		base._ExitTree();
-
-		StrongReferenceMessenger.Default.UnregisterAll(this); //Lets to unregister messages (For what idk)
-	}
-
+	
 	#endregion
 
-	#region methods
+	#region Methods
 	private void UpdateCrosshairPosition()
 	{
 		if (_crosshair != null)
@@ -95,7 +97,9 @@ public partial class Camera : Camera3D, ScoreListener
 		if (_rayCast.IsColliding())
 		{
 			Rid colliderRid = _rayCast.GetColliderRid();
-			StrongReferenceMessenger.Default.Send<Hit>(new(colliderRid));
+			Vector3 hitPosition = _rayCast.GetCollisionPoint();
+			Vector3 hitDirection = _rayCast.GetCollisionNormal();
+			StrongReferenceMessenger.Default.Send<Hit>(new(colliderRid, hitPosition, hitDirection));
 		}
 		
 		if (_gunSfx != null)

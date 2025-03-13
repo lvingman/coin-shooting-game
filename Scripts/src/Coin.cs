@@ -41,12 +41,27 @@ public partial class Coin : RigidBody3D, HitListener
 	
 	#endregion
 
+	#region Methods
+	
+	// Method to apply an impulse based on the hit direction
+	private void ApplyImpulseAtGlobalPosition(Vector3 direction, Vector3 position)
+	{
+		// Define the strength of the impulse (adjust as necessary)
+		float impulseStrength = 10f;
+        
+		// Apply the impulse to the coin in the direction of the hit
+		ApplyImpulse(position, direction.Normalized() * impulseStrength);
+	}
+	
+	#endregion
+	
 	#region Events
 	
 	public void Receive(Hit message)
 	{
 		if (message.rid == GetRid())
 		{
+			ApplyImpulseAtGlobalPosition(message.hitPosition, message.hitDirection);
 			ScoreSgt.Instance.AddPoints(100);
 			CoinHitSFX.Play();
 		}

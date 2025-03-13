@@ -1,9 +1,11 @@
 using Godot;
 using System;
 using CoinShootingGame.Scripts.Communication;
+using CoinShootingGame.Scripts.Communication.Listener;
+using CoinShootingGame.Scripts.src.Globals;
 using CommunityToolkit.Mvvm.Messaging;
 
-public partial class Coin : RigidBody3D, IRecipient<Hit>
+public partial class Coin : RigidBody3D, HitListener
 {
 	#region Attributes
 	
@@ -45,6 +47,7 @@ public partial class Coin : RigidBody3D, IRecipient<Hit>
 	{
 		if (message.rid == GetRid())
 		{
+			ScoreSgt.Instance.AddPoints(100);
 			CoinHitSFX.Play();
 		}
 	}

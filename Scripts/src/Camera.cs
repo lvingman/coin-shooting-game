@@ -1,8 +1,9 @@
 using CoinShootingGame.Scripts.Communication;
+using CoinShootingGame.Scripts.Communication.Listener;
 using CommunityToolkit.Mvvm.Messaging;
 using Godot;
 
-public partial class Camera : Camera3D
+public partial class Camera : Camera3D, ScoreListener
 {
 	#region Attributes
 	[Export]
@@ -15,6 +16,7 @@ public partial class Camera : Camera3D
 	private TextureRect _crosshair;
 	private RayCast3D _rayCast;
 	private AudioStreamPlayer _gunSfx;
+	private Label _scoreLbl;
 	
 	#endregion
 	
@@ -26,7 +28,8 @@ public partial class Camera : Camera3D
 		_crosshair = GetNode<TextureRect>("Crosshair");
 		_rayCast = GetNode<RayCast3D>("RayCast3D");
 		_gunSfx = GetNode<AudioStreamPlayer>("GunSFX");
-
+		_scoreLbl = GetNode<Label>("ScoreLbl");		
+		
 		Input.MouseMode = Input.MouseModeEnum.Hidden;
 	}
 
@@ -51,6 +54,19 @@ public partial class Camera : Camera3D
 			ShootGun();
 		}
 	}
+	
+	public override void _EnterTree()   //Lets to listen messages from IRecipient and the type of message emmited
+	{
+		base._EnterTree();
+		StrongReferenceMessenger.Default.RegisterAll(this);
+	}
+
+	public override void _ExitTree()
+	{
+		base._ExitTree();
+
+		StrongReferenceMessenger.Default.UnregisterAll(this); //Lets to unregister messages (For what idk)
+	}
 
 	#endregion
 
@@ -71,8 +87,6 @@ public partial class Camera : Camera3D
 
 		_rayCast.GlobalPosition = ProjectRayOrigin(mousePos);
 		_rayCast.TargetPosition = ProjectRayNormal(mousePos) *100f;
-		
-		GD.Print($"Raycast Location: {_rayCast.GlobalPosition}, Raycast Target: {_rayCast.TargetPosition}");
 	}
 
 	private void ShootGun()
@@ -96,5 +110,13 @@ public partial class Camera : Camera3D
 	}
 	
 	#endregion
+
+	#region Events
+	public void Receive(ScoreIncrease message)
+	{
+		_scoreLbl.Text = $"SCORE: {message.score}";
+		GD.Print($"ScoreLbl Updated: {message.score}");
+	}
 	
+	#endregion
 }

@@ -9,6 +9,8 @@ public partial class Coin : RigidBody3D, HitListener
 {
 	#region Attributes
 	
+	[Export]
+	public float impulseStrength = 10f;
 	public AudioStreamPlayer CoinHitSFX { get; set; }
 	
 	#endregion
@@ -46,9 +48,6 @@ public partial class Coin : RigidBody3D, HitListener
 	// Method to apply an impulse based on the hit direction
 	private void ApplyImpulseAtGlobalPosition(Vector3 direction, Vector3 position)
 	{
-		// Define the strength of the impulse (adjust as necessary)
-		float impulseStrength = 10f;
-        
 		// Apply the impulse to the coin in the direction of the hit
 		ApplyImpulse(position, direction.Normalized() * impulseStrength);
 	}
@@ -61,11 +60,27 @@ public partial class Coin : RigidBody3D, HitListener
 	{
 		if (message.rid == GetRid())
 		{
-			ApplyImpulseAtGlobalPosition(message.hitPosition, message.hitDirection);
+			// Get the direction of the raycast hit (opposite of the collision normal)
+			Vector3 hitDirection = message.hitDirection;
+
+			// Calculate the upward direction (Y-axis) and combine it with the hit direction
+			Vector3 upwardForce = new Vector3(0, 5, 0); // Upward direction
+			Vector3 oppositeForce = hitDirection * -1;  // Opposite direction of where we shot
+
+			// Combine the forces
+			Vector3 forceToApply = upwardForce + oppositeForce;
+
+			// Apply an impulse at the collision point
+			ApplyImpulseAtGlobalPosition(forceToApply, message.hitPosition);
+
+			// Add points to the score
 			ScoreSgt.Instance.AddPoints(100);
+
+			// Play hit sound effect
 			CoinHitSFX.Play();
 		}
 	}
+
 	
 	#endregion
 }

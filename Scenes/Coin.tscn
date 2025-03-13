@@ -17,6 +17,7 @@ roughness = 0.5
 [node name="Coin" type="RigidBody3D"]
 continuous_cd = true
 script = ExtResource("1_mwy6x")
+impulseStrength = 1.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CylinderShape3D_6ixcc")

@@ -20,8 +20,8 @@ data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0
 [node name="Coin" parent="Environment" instance=ExtResource("1_ipcrd")]
 transform = Transform3D(0.999808, 0, 0, 0, 0.769018, 0.638927, 0, -0.638927, 0.769018, -0.842623, 2.96827, 0.275054)
 gravity_scale = 0.254
-linear_velocity = Vector3(0, 10, 0)
 angular_velocity = Vector3(8.72665, 0, 0)
+impulseStrength = 2.0
 
 [node name="Camera" parent="Environment" node_paths=PackedStringArray("Target") instance=ExtResource("2_j61r5")]
 transform = Transform3D(1, 0, 0, 0, 0.399996, -0.916517, 0, 0.916517, 0.399996, 0, 2.339, 2.04886)

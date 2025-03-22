@@ -46,11 +46,37 @@ public partial class Coin : RigidBody3D, HitListener
 	#region Methods
 	
 	// Method to apply an impulse based on the hit direction
-	private void ApplyImpulseAtGlobalPosition(Vector3 direction, Vector3 position)
+	private void ApplyImpulse(Vector3 hitPosition, Vector3 hitDirection)
 	{
-		// Apply the impulse to the coin in the direction of the hit
-		ApplyImpulse(position, direction.Normalized() * impulseStrength);
+		GD.Print($"RayCast hit Position: {hitPosition} / Coin Global Position: {GlobalPosition}");
+
+		// Calculate displacement vector
+		Vector3 displacement = hitPosition - GlobalPosition;
+
+		// Compute a right vector (perpendicular to hitDirection)
+		Vector3 worldUp = Vector3.Up;
+		if (hitDirection.Abs().DistanceTo(Vector3.Up) < 0.1f) // If hitDirection is almost vertical, use another axis
+			worldUp = Vector3.Forward;
+
+		Vector3 rightVector = hitDirection.Cross(worldUp).Normalized();
+
+		// Calculate normalized offset (-1 to 1)
+		float maxExtent = 0.5f; // Adjust based on object size
+		float offset = Mathf.Clamp(displacement.Dot(rightVector) / maxExtent, -1f, 1f);
+
+		// Gradually scale the lateral force
+		float lateralStrength = impulseStrength * offset;
+
+		// Compute force direction
+		Vector3 impulseForce = Vector3.Up * impulseStrength; // Always apply upward force
+		impulseForce += rightVector * -lateralStrength; // Stronger push if near an edge
+
+		// Apply the impulse
+		LinearVelocity += impulseForce;
+
+		GD.Print($"Offset: {offset}, Impulse: {impulseForce}");
 	}
+
 	
 	#endregion
 	
@@ -60,18 +86,7 @@ public partial class Coin : RigidBody3D, HitListener
 	{
 		if (message.rid == GetRid())
 		{
-			// Get the direction of the raycast hit (opposite of the collision normal)
-			Vector3 hitDirection = message.hitDirection;
-
-			// Calculate the upward direction (Y-axis) and combine it with the hit direction
-			Vector3 upwardForce = new Vector3(0, 5, 0); // Upward direction
-			Vector3 oppositeForce = hitDirection * -1;  // Opposite direction of where we shot
-
-			// Combine the forces
-			Vector3 forceToApply = upwardForce + oppositeForce;
-
-			// Apply an impulse at the collision point
-			ApplyImpulseAtGlobalPosition(forceToApply, message.hitPosition);
+			ApplyImpulse(message.hitPosition, message.hitDirection);
 
 			// Add points to the score
 			ScoreSgt.Instance.AddPoints(100);

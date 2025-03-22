@@ -1,7 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://cfqajbgqccrke"]
+[gd_scene load_steps=13 format=3 uid="uid://cfqajbgqccrke"]
 
 [ext_resource type="PackedScene" uid="uid://c7x58bj2xvasf" path="res://Scenes/Target.tscn" id="1_t1yal"]
 [ext_resource type="PackedScene" uid="uid://bdo6yyrrddwad" path="res://Scenes/Camera.tscn" id="2_c8l74"]
+[ext_resource type="PackedScene" uid="uid://wjw7h2iihacr" path="res://Scenes/Coin.tscn" id="3_j24uv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pcdsu"]
 albedo_color = Color(0.278169, 0.441308, 0.267178, 1)
@@ -9,7 +10,7 @@ albedo_color = Color(0.278169, 0.441308, 0.267178, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_b68rx"]
 material = SubResource("StandardMaterial3D_pcdsu")
 
-[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_t7jc7"]
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_fp67w"]
 data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ghsen"]
@@ -22,43 +23,63 @@ albedo_color = Color(0.940325, 0.691354, 0.470988, 1)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tpvks"]
 albedo_color = Color(0.765523, 0.953929, 0.748861, 1)
 
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_41y5g"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
 [sub_resource type="Environment" id="Environment_f23bm"]
 
 [node name="RayCastTestRoom" type="Node3D"]
 
-[node name="Floor" type="MeshInstance3D" parent="."]
+[node name="WorldGeometry" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="WorldGeometry"]
 transform = Transform3D(91.2419, 0, 0, 0, 1.30159, 0, 0, 0, 79.081, 0, 0, 0)
 mesh = SubResource("BoxMesh_b68rx")
+skeleton = NodePath("../..")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
+[node name="StaticBody3D" type="StaticBody3D" parent="WorldGeometry/Floor"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D"]
-shape = SubResource("ConcavePolygonShape3D_t7jc7")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WorldGeometry/Floor/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_fp67w")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WorldGeometry"]
 transform = Transform3D(-6.02842e-07, -1, 2.75677e-06, 13.7914, -4.37114e-08, 0, -5.27021e-14, -8.74228e-08, -31.5337, 43.4574, 3.24948, 0)
 material_override = SubResource("StandardMaterial3D_ghsen")
 material_overlay = SubResource("StandardMaterial3D_f3pdd")
 mesh = SubResource("PlaneMesh_sqsn4")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_tpvks")
 
-[node name="Target" parent="." instance=ExtResource("1_t1yal")]
+[node name="StaticBody3D" type="StaticBody3D" parent="WorldGeometry/MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WorldGeometry/MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_41y5g")
+
+[node name="WorldObjects" type="Node3D" parent="."]
+
+[node name="Target" parent="WorldObjects" instance=ExtResource("1_t1yal")]
 transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 42.7913, 11.7275, 0)
 
-[node name="Target5" parent="." instance=ExtResource("1_t1yal")]
+[node name="Target5" parent="WorldObjects" instance=ExtResource("1_t1yal")]
 transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 42.6898, 11.7275, -14.3913)
 
-[node name="Target2" parent="." instance=ExtResource("1_t1yal")]
+[node name="Target2" parent="WorldObjects" instance=ExtResource("1_t1yal")]
 transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 43.0644, 11.7275, 13.5091)
 
-[node name="Target3" parent="." instance=ExtResource("1_t1yal")]
+[node name="Target3" parent="WorldObjects" instance=ExtResource("1_t1yal")]
 transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 43.0644, 5.38548, 6.0026)
 
-[node name="Target4" parent="." instance=ExtResource("1_t1yal")]
+[node name="Target4" parent="WorldObjects" instance=ExtResource("1_t1yal")]
 transform = Transform3D(5, 0, -5.68434e-14, 0, 5, 0, 5.68434e-14, 0, 5, 43.0644, 5.38548, -8.90911)
 
-[node name="Camera" parent="." instance=ExtResource("2_c8l74")]
-transform = Transform3D(-0.0063529, 0, -0.99998, 0, 1, 0, 0.99998, 0, -0.0063529, 7.29928, 12.1306, 0)
+[node name="Camera" parent="WorldObjects" instance=ExtResource("2_c8l74")]
+transform = Transform3D(-0.0063529, 0, -0.99998, 0, 1, 0, 0.99998, 0, -0.0063529, 7.29928, 4.29157, 0)
+
+[node name="Coin" parent="WorldObjects" instance=ExtResource("3_j24uv")]
+transform = Transform3D(0.0650374, -0.997883, 0, 0.997883, 0.0650374, 0, 0, 0, 1, 12.8726, 6.15384, -0.00522041)
+mass = 3.403
+gravity_scale = 2.078
+impulseStrength = 10.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_f23bm")

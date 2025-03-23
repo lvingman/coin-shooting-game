@@ -51,22 +51,7 @@ public partial class Camera : Camera3D, ScoreListener
 	{
 		if (Target == null) return;
 
-		Vector3 targetPos = Target.GlobalPosition;
-		Vector3 cameraPos = GlobalPosition;
-
-		// Check the distance in the X and Z axes
-		float distanceX = Mathf.Abs(targetPos.X - cameraPos.X);
-		float distanceZ = Mathf.Abs(targetPos.Z - cameraPos.Z);
-
-		// Move the camera if it's too far
-		if (distanceX > 100 || distanceZ > 100)
-		{
-			Vector3 newPos = new Vector3(targetPos.X, cameraPos.Y, targetPos.Z);
-			GlobalPosition = GlobalPosition.Lerp(newPos, (float)delta * RotationSpeed);
-		}
-
-		// Keep looking at the target
-		_currentLookAtPoint = _currentLookAtPoint.Lerp(targetPos, (float)delta * RotationSpeed);
+		_currentLookAtPoint = _currentLookAtPoint.Lerp(Target.GlobalPosition, (float)delta * RotationSpeed);
 		LookAt(_currentLookAtPoint);
 	}
 

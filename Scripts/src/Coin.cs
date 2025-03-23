@@ -11,16 +11,20 @@ public partial class Coin : RigidBody3D, HitListener
 	
 	[Export]
 	public float impulseStrength = 10f;
+	private float lateralMultiplier = 1.5f;
+
 	public AudioStreamPlayer CoinHitSFX { get; set; }
+	public Area3D Hitbox { get; set; }
 	
 	#endregion
 	
 	#region Overrides
 	
 	#region MVVM
-	public override void _EnterTree()   //Lets to listen messages from IRecipient and the type of message emmited
+	public override void _EnterTree()  
     {
         base._EnterTree();
+        Hitbox = GetNode<Area3D>("Hitbox");
 		StrongReferenceMessenger.Default.RegisterAll(this);
     }
 
@@ -28,7 +32,7 @@ public partial class Coin : RigidBody3D, HitListener
     {
         base._ExitTree();
 
-		StrongReferenceMessenger.Default.UnregisterAll(this); //Lets to unregister messages (For what idk)
+		StrongReferenceMessenger.Default.UnregisterAll(this);
     }
 	
 	#endregion
@@ -44,58 +48,46 @@ public partial class Coin : RigidBody3D, HitListener
 	#endregion
 
 	#region Methods
-	
-	// Method to apply an impulse based on the hit direction
+
 	private void ApplyImpulse(Vector3 hitPosition, Vector3 hitDirection)
 	{
 		GD.Print($"RayCast hit Position: {hitPosition} / Coin Global Position: {GlobalPosition}");
 
-		// Calculate displacement vector
 		Vector3 displacement = hitPosition - GlobalPosition;
+		Vector3 rightVector = hitDirection.Cross(Vector3.Up).Normalized();
+		Vector3 forwardVector = rightVector.Cross(Vector3.Up).Normalized();
 
-		// Compute a right vector (perpendicular to hitDirection)
-		Vector3 worldUp = Vector3.Up;
-		if (hitDirection.Abs().DistanceTo(Vector3.Up) < 0.1f) // If hitDirection is almost vertical, use another axis
-			worldUp = Vector3.Forward;
+		float horizontalOffset = displacement.Dot(rightVector);
+		float verticalOffset = displacement.Dot(forwardVector);
 
-		Vector3 rightVector = hitDirection.Cross(worldUp).Normalized();
+		float maxExtent = 0.5f;
+		float lateralStrength = Mathf.Clamp(horizontalOffset / maxExtent, -1f, 1f) * impulseStrength * lateralMultiplier;
+		float verticalStrength = Mathf.Clamp(verticalOffset / maxExtent, -1f, 1f) * impulseStrength * 0.75f;
 
-		// Calculate normalized offset (-1 to 1)
-		float maxExtent = 0.5f; // Adjust based on object size
-		float offset = Mathf.Clamp(displacement.Dot(rightVector) / maxExtent, -1f, 1f);
+		Vector3 impulseForce = (Vector3.Up * verticalStrength) + (-rightVector * lateralStrength);
 
-		// Gradually scale the lateral force
-		float lateralStrength = impulseStrength * offset;
-
-		// Compute force direction
-		Vector3 impulseForce = Vector3.Up * impulseStrength; // Always apply upward force
-		impulseForce += rightVector * -lateralStrength; // Stronger push if near an edge
-
-		// Apply the impulse
 		LinearVelocity += impulseForce;
 
-		GD.Print($"Offset: {offset}, Impulse: {impulseForce}");
+		GD.Print($"Offset: Horizontal {horizontalOffset}, Vertical {verticalOffset}, Impulse: {impulseForce}");
 	}
 
-	
 	#endregion
-	
+
 	#region Events
-	
+
 	public void Receive(Hit message)
 	{
 		if (message.rid == GetRid())
 		{
 			ApplyImpulse(message.hitPosition, message.hitDirection);
-
-			// Add points to the score
 			ScoreSgt.Instance.AddPoints(100);
-
-			// Play hit sound effect
+			impulseStrength += 1;
+			lateralMultiplier += 0.2f;
 			CoinHitSFX.Play();
 		}
 	}
 
-	
 	#endregion
+	
+	
 }
